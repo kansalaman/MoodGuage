@@ -1,7 +1,6 @@
 import numpy as np
 import scipy.io.wavfile as wav
 from python_speech_features import mfcc,logfbank
-import scipy.io.wavfile as wav
 from sklearn.feature_selection import SelectKBest,f_classif
 from sklearn import svm
 #import wavio
@@ -51,6 +50,7 @@ if __name__=='__main__':
 	y=[1,2,3,1,2,3,1,2,3,1,3]
 
 	rd_file[0] = read("Audio_Speech_Actors_01-24/Actor_01/03-01-01-01-01-01-01.wav")
+	print('read fine')
 	rd_file[1] = read("Audio_Speech_Actors_01-24/Actor_01/03-01-02-01-01-01-01.wav")
 	rd_file[2] = read("Audio_Speech_Actors_01-24/Actor_01/03-01-03-01-01-01-01.wav")
 	rd_file[3] = read("Audio_Speech_Actors_01-24/Actor_02/03-01-01-01-01-01-02.wav")

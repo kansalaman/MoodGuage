@@ -1,0 +1,8 @@
+https://www.intechopen.com/online-first/automatic-speech-emotion-recognition-using-machine-learning
+https://towardsdatascience.com/is-lda-a-dimensionality-reduction-technique-or-a-classifier-algorithm-eeed4de9953a- LDA
+
+LDA: Linear Discriminant Analysis also works as a dimensionality reduction algorithm, it means that it reduces the number of dimension from original to C — 1 number of features where C is the number of classes. 
+
+ANOVA: Selects K features (K can be chosen) based on ANOVA F-values. F = (var between treatments)/(var within treatments)
+
+

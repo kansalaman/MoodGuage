@@ -3,7 +3,7 @@ model_config = {
     'bidirectional': False,
     'input_dim': 8,
     'hidden_dim': 50,
-    'output_dim': 6,  # number of classes
+    'output_dim': 8,  # number of classes
     'dropout': 0.2,
     'learning_rate': 0.01,
     'batch_size': 1567,  # carefully chosen

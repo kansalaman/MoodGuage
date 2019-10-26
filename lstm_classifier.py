@@ -3,7 +3,7 @@ import torch.nn as nn
 from config import model_config
 import torch.nn.functional as F
 from torch import optim
-from utils import load_data, evaluate, plot_confusion_matrix
+from lstm_utils import load_data, evaluate
 import numpy as np
 import pickle
 
@@ -25,6 +25,7 @@ class LSTMClassifier(nn.Module):
 
         self.out=nn.Linear(self.hidden_dim,self.output_dim)
         self.softmax=F.softmax
+
     def forward(self, input_seq):
         rnn_output, (hidden,_) = self.rnn(input_seq)
         if(self.bidirectional):
@@ -58,9 +59,9 @@ if __name__=='__main__':
             targets=targets.to(device)
             model.zero_grad()
             optimizer.zero_grad()
-            proedictions=model(inputs)
+            predictions=model(inputs)
             predictions=predictions.to(device)
-
+            
             loss=criterion(predictions,targets)
             loss.backward()
             optimizer.step()

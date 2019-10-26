@@ -171,4 +171,3 @@ def up_sample(df,label):
     for i in range(10):
         df = df.append(emo_df)
     return df
->>>>>>> b67d0aec46fcecd039572ad54821c319888249d7

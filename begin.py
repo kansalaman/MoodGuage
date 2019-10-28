@@ -5,6 +5,7 @@ import pandas as pd
 import librosa
 import pickle
 from tqdm import tqdm
+from config import model_config
 
 base_directory = "/home/aman/MoodGuage/Audio_Speech_Actors_01-24/"
 
@@ -12,7 +13,7 @@ audio_vec=dict()
 file_name_list=[]
 emotion_list=[]
 df_ravdess=pd.DataFrame(columns=['file_name','emotion'])
-sr=44100
+sr=model_config['sr']
 
 for subdir in os.listdir(base_directory):
     if(subdir=='.gitignore'):

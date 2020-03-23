@@ -2,4 +2,4 @@
 *.csv
 *.pdf
 *.wav
-*.pth*
+my_best_model.pth

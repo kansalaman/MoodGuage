@@ -12,7 +12,7 @@ import torch.nn.functional as F
 
 class soundDataset(dataset.Dataset):
     def __init__(self):
-        audio_vecs = pickle.load(open('file_vector_pickle.pkl', 'rb'))
+        # audio_vecs = pickle.load(open('file_vector_pickle.pkl', 'rb'))
         self.emotion_list=pickle.load(open('emos.pkl','rb'))
         self.audio_vec_list = pickle.load(open('audio_feats.pkl', 'rb'))
         # self.emotion_list=[]
@@ -42,15 +42,39 @@ class LSTM_mfcc(nn.Module):
         self.hidden_dim=40
         self.output_dim=8
         self.dropout=0.2
-        self.rnn=nn.LSTM(self.input_dim,self.hidden_dim,bias=True,num_layers=2,dropout=self.dropout,bidirectional=False)
-        self.out=nn.Linear(self.hidden_dim,self.output_dim)
+        self.rnn=nn.LSTM(self.input_dim,self.hidden_dim,bias=True,num_layers=2,dropout=self.dropout,bidirectional=True)
+        self.out=nn.Linear(self.hidden_dim*2,self.output_dim)
         self.softmax=F.softmax
     
     def forward(self,input_seq):
         rnn_output,(hidden,_)=self.rnn(input_seq)
         #NO support for bidirectionals
-        class_scores=F.softmax(self.out(rnn_output[0]),dim=1)
+        x = torch.cat((rnn_output[-1][:, :40], rnn_output[0][:, 40:]))
+        x=self.out(x.view(1,self.hidden_dim*2))
+        class_scores=F.softmax(x,dim=1)
         return class_scores
+
+
+# class LSTM_mfcc(nn.Module):
+#     def __init__(self):
+#         super(LSTM_mfcc, self).__init__()
+#         self.n_layers = 2
+#         self.input_dim = 20
+#         self.hidden_dim = 40
+#         self.output_dim = 8
+#         self.dropout = 0.2
+#         self.rnn = nn.LSTM(self.input_dim, self.hidden_dim, bias=True,
+#                            num_layers=2, dropout=self.dropout, bidirectional=False)
+#         self.out = nn.Linear(self.hidden_dim, self.output_dim)
+#         self.softmax = F.softmax
+
+#     def forward(self, input_seq):
+#         rnn_output, (hidden, _) = self.rnn(input_seq)
+#         #NO support for bidirectionals
+#         # print(hidden.shape)
+
+#         class_scores = F.softmax(self.out(rnn_output[-1]), dim=1)
+#         return class_scores
 
 
 device = 'cpu'
@@ -69,7 +93,7 @@ test_loader = dataloader.DataLoader(
 
 num_epochs=10
 criterion=nn.CrossEntropyLoss()
-optimizer=optim.Adam(model.parameters(),lr=0.001)
+optimizer=optim.Adam(model.parameters(),lr=0.00001)
 
 for epoch in range(num_epochs):
     model.train()
@@ -89,12 +113,28 @@ for epoch in range(num_epochs):
         loss=criterion(predictions,targets)
         loss.backward()
         optimizer.step()
+
+        if(i%10==0):
+             with torch.no_grad():
+                correct = 0
+                j = 0
+                for data, target in test_loader:
+                    # print('test iteration', i)
+                    j += 1
+                    inputs = data[0].unsqueeze(1)
+                    targets = target
+                    inputs = inputs.to(device)
+                    targets = targets.to(device)
+                    predictions = model(inputs)
+                    if(np.argmax(predictions, axis=1)[0].item() == targets[0].item()):
+                        correct += 1
+                print('Accuracy is {:.2f}'.format(correct/len(test_indices)))
     
     with torch.no_grad():
         correct=0
         i=0
         for data, target in test_loader:
-            print('test iteration',i)
+            # print('test iteration',i)
             i+=1
             inputs = data[0].unsqueeze(1)
             targets = target
